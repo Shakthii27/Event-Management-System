@@ -4,7 +4,6 @@ import sqlite3, os
 app = Flask(__name__)
 app.secret_key = "secret123"
 
-# ---------------- DATABASE ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "event.db")
 
@@ -50,7 +49,6 @@ def init():
 
 init()
 
-# ---------------- STYLE (FONT IMPROVED ONLY) ----------------
 STYLE = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
@@ -146,7 +144,6 @@ button{
 </style>
 """
 
-# ---------------- LOGIN + SIGNUP ----------------
 @app.route("/", methods=["GET","POST"])
 def login():
     error = ""
@@ -214,13 +211,11 @@ def login():
     </div>
     """)
 
-# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-# ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
@@ -253,7 +248,6 @@ def dashboard():
     html += "</div>"
     return html
 
-# ---------------- CREATE EVENT ----------------
 @app.route("/create", methods=["GET","POST"])
 def create():
     if "user" not in session:
@@ -293,7 +287,6 @@ def create():
     </div>
     """)
 
-# ---------------- VIEW EVENTS ----------------
 @app.route("/events")
 def events():
     events = db().execute("SELECT * FROM events ORDER BY date").fetchall()
@@ -325,7 +318,6 @@ def events():
     html += "</div>"
     return html
 
-# ---------------- REGISTER ----------------
 @app.route("/register/<int:event_id>", methods=["GET","POST"])
 def register(event_id):
     if request.method == "POST":
@@ -364,6 +356,7 @@ def register(event_id):
     </div>
     """)
 
-# ---------------- RUN ----------------
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
