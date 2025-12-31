@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Event Manager</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container glass">
+  <h1>Login</h1>
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Email address"
+    autocomplete="email"
+  >
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Password"
+    autocomplete="current-password"
+  >
+
+  <button onclick="login()">Login</button>
+
+  <p id="msg" style="color:#fca5a5; min-height:18px;"></p>
+
+  <p style="margin-top:12px;">
+    Don’t have an account?
+    <a href="/signup" class="signup-link">Sign up</a>
+  </p>
+</div>
+
+<script>
+const API = "/api";
+
+function login(){
+  const msg = document.getElementById("msg");
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  msg.innerText = "";
+
+  if(!email || !password){
+    msg.innerText = "Please enter email and password.";
+    return;
+  }
+
+  fetch(`${API}/login`, {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify({ email, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      localStorage.setItem("user_id", data.user_id);
+      localStorage.setItem("role", data.role);
+      window.location.href = "/dashboard";
+    } else {
+      msg.innerText = data.message;
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    msg.innerText = "Cannot reach server.";
+  });
+}
+</script>
+
+</body>
+</html>
