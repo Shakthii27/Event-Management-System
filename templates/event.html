@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Details</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container glass">
+  <h1 id="title">Event</h1>
+
+  <p id="datetime"></p>
+  <p id="venue"></p>
+  <p id="status"></p>
+
+  <a id="registerLink" class="btn">📝 Register</a>
+</div>
+
+<script>
+const API = "/api";
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("id");
+
+if(!eventId){
+  document.body.innerHTML = "<h2>Invalid Event</h2>";
+}
+
+fetch(`${API}/events`)
+.then(res => res.json())
+.then(events => {
+  const e = events.find(ev => ev.id == eventId);
+  if(!e){
+    document.body.innerHTML = "<h2>Event not found</h2>";
+    return;
+  }
+
+  document.getElementById("title").innerText = e.name;
+  document.getElementById("datetime").innerText = `${e.date} • ${e.time}`;
+  document.getElementById("venue").innerText = e.venue;
+  document.getElementById("status").innerText = `Status: ${e.status}`;
+
+  document.getElementById("registerLink").href =
+    `/register?event_id=${e.id}`;
+});
+</script>
+
+</body>
+</html>

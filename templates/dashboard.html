@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="topbar glass">
+  <button onclick="location.href='/profile'">👤 Profile</button>
+  <button onclick="logout()">🚪 Logout</button>
+</div>
+
+<div class="container glass">
+  <h1>Dashboard</h1>
+
+  <button class="primary" onclick="location.href='/create'">
+    ➕ Create New Event
+  </button>
+
+  <h2>All Events</h2>
+  <div id="events"></div>
+</div>
+
+<script>
+const API="/api";
+
+fetch(API+"/events")
+.then(r=>r.json())
+.then(events=>{
+  const box=document.getElementById("events");
+  events.forEach(e=>{
+    box.innerHTML+=`
+      <div class="event-card glass">
+        <h3>${e.name}</h3>
+        <p>${e.date} • ${e.time}</p>
+        <p>${e.venue}</p>
+        <div class="actions">
+          <a href="/register?event_id=${e.id}">📝 Register</a>
+          <button onclick="share(${e.id})">🔗 Share</button>
+        </div>
+      </div>`;
+  })
+});
+
+function share(id){
+  navigator.clipboard.writeText(
+    location.origin+"/register?event_id="+id
+  );
+  alert("Link copied!");
+}
+function logout(){
+  localStorage.clear();
+  location.href="/login";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup | Event Manager</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container glass">
+  <h1>Create Account</h1>
+
+  <input id="name" placeholder="Full Name">
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+
+  <button onclick="signup()">Signup</button>
+
+  <p id="msg" style="min-height:18px;"></p>
+
+  <p style="margin-top:12px;">
+    Already have an account?
+    <a href="/login">Login</a>
+  </p>
+</div>
+
+<script>
+const API = "/api";
+
+function signup(){
+  const msg = document.getElementById("msg");
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  msg.innerText = "";
+
+  if(!name || !email || !password){
+    msg.innerText = "Please fill all fields.";
+    msg.style.color = "#fca5a5";
+    return;
+  }
+
+  fetch(`${API}/signup`, {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify({ name, email, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      msg.style.color = "#4ade80";
+      msg.innerText = "Account created! Redirecting to login...";
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1200);
+    } else {
+      msg.style.color = "#fca5a5";
+      msg.innerText = data.message;
+    }
+  })
+  .catch(() => {
+    msg.style.color = "#fca5a5";
+    msg.innerText = "Server error.";
+  });
+}
+</script>
+
+</body>
+</html>

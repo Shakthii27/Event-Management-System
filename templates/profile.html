@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profile</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container glass">
+  <h2>Your Profile</h2>
+  <div id="p"></div>
+  <button class="primary" onclick="upgrade()">Upgrade to Organiser</button>
+</div>
+
+<script>
+const id=localStorage.getItem("user_id");
+
+fetch("/api/profile/"+id)
+.then(r=>r.json())
+.then(u=>{
+  p.innerHTML=`
+    <p>Name: ${u.name}</p>
+    <p>Email: ${u.email}</p>
+    <p>Role: ${u.role}</p>`;
+});
+
+function upgrade(){
+  fetch("/api/upgrade",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({user_id:id})
+  }).then(()=>{
+    alert("Upgraded!");
+    location.href="/dashboard";
+  });
+}
+</script>
+</body>
+</html>

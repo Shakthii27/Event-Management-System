@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Event</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container glass">
+  <h2>Create Event</h2>
+
+  <input id="eventName" placeholder="Event name">
+  <input id="eventDate" type="date">
+  <input id="eventTime" type="time">
+  <input id="eventVenue" placeholder="Venue">
+
+  <!-- 🔥 IMPORTANT: type=button -->
+  <button type="button" id="createBtn">Create Event</button>
+
+  <p id="msg"></p>
+</div>
+
+<script>
+const API = "/api";
+const userId = localStorage.getItem("user_id");
+
+document.addEventListener("DOMContentLoaded", () => {
+  document
+    .getElementById("createBtn")
+    .addEventListener("click", createEvent);
+});
+
+function createEvent(){
+  const msg = document.getElementById("msg");
+
+  const name  = document.getElementById("eventName").value.trim();
+  const date  = document.getElementById("eventDate").value; // YYYY-MM-DD
+  const time  = document.getElementById("eventTime").value; // HH:MM
+  const venue = document.getElementById("eventVenue").value.trim();
+
+  if(!name || !date || !time || !venue){
+    msg.innerText = "⚠️ Please fill all fields";
+    msg.style.color = "#fca5a5";
+    return;
+  }
+
+  msg.innerText = "Creating event...";
+  msg.style.color = "#e5e7eb";
+
+  fetch(`${API}/events`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name,
+      date,
+      time,
+      venue,
+      user_id: userId
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      msg.innerText = "✅ Event created! Redirecting...";
+      msg.style.color = "#4ade80";
+
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1200);
+    } else {
+      msg.innerText = "❌ Failed to create event";
+      msg.style.color = "#fca5a5";
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    msg.innerText = "❌ Server error";
+    msg.style.color = "#fca5a5";
+  });
+}
+</script>
+
+</body>
+</html>

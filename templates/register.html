@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container glass">
+  <h2>Register for Event</h2>
+  <input id="email" placeholder="Email">
+  <button class="primary" onclick="register()">Register</button>
+  <div id="out"></div>
+</div>
+
+<script>
+const API="/api";
+const eventId=new URLSearchParams(location.search).get("event_id");
+
+function register(){
+  fetch(API+"/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      event_id:eventId,
+      email:email.value
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.success){
+      out.innerHTML=`
+        <p>✅ Registered</p>
+        <p>Ticket: ${d.ticket_id}</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${d.ticket_id}">
+      `;
+    }
+  });
+}
+</script>
+</body>
+</html>
